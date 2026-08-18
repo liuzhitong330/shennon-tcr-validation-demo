@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A role-specific TCR validation planning notebook built by Cathy Liu for Shennon Biotechnologies.">
+  <title>Can a TCR batch prove both activity and specificity?</title>
+  <link rel="stylesheet" href="styles.css?v=20260818a">
+</head>
+<body>
+  <header class="masthead">
+    <a class="wordmark" href="#top">Cathy Liu / research note</a>
+    <a class="quiet-link" href="mailto:cathyliu014@gmail.com">Contact</a>
+  </header>
+
+  <main id="top">
+    <article>
+      <p class="eyebrow">18 August 2026 · Shennon Biotechnologies</p>
+      <h1>Can a TCR batch prove both activity and specificity?</h1>
+      <p class="dek">A small planning notebook that connects transduction quality, donor-balanced co-culture design, and orthogonal T-cell readouts.</p>
+      <p class="byline">Built by Cathy Liu for the Research Associate / Senior Research Associate position</p>
+
+      <nav class="section-nav" aria-label="Article sections">
+        <a href="#batch">Batch check</a>
+        <a href="#series">Dose series</a>
+        <a href="#assay">Assay design</a>
+        <a href="#evidence">Evidence</a>
+      </nav>
+
+      <section class="lead">
+        <p>ShennonBio’s published MAGE-A1 program moves from single-cell discovery to a demanding validation chain: engineered Jurkat cells, transduced primary T cells from multiple donors, activation-marker flow cytometry, cytokine secretion, target-cell killing, and finally in vivo tumor control. A useful research-associate tool should keep the biological controls and the cell arithmetic visible at every step.</p>
+        <p class="method-callout"><strong>I built this notebook to answer one practical question:</strong> is an engineered T-cell batch ready for a functional assay, and does the proposed experiment distinguish potency from nonspecific activation?</p>
+      </section>
+
+      <section id="batch">
+        <p class="section-number">01</p>
+        <h2>Qualify the engineered T-cell batch</h2>
+        <p>Enter the pre-assay flow and cell-count observations. The thresholds are transparent, editable planning defaults - not ShennonBio specifications.</p>
+
+        <div class="interaction-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="small-label">Primary T-cell input</p>
+              <h3 id="batch-status">Ready for functional assay</h3>
+            </div>
+            <span id="batch-badge" class="status-badge pass">Pass</span>
+          </div>
+
+          <div class="controls-grid">
+            <label>Viable cells available
+              <span><input id="cell-count" type="number" min="0" step="0.1" value="2.4"> million</span>
+            </label>
+            <label>Viability
+              <span><input id="viability" type="number" min="0" max="100" step="1" value="91"> %</span>
+            </label>
+            <label>TCR-positive cells
+              <span><input id="tcr-positive" type="number" min="0" max="100" step="1" value="63"> %</span>
+            </label>
+            <label>Untransduced CD69 background
+              <span><input id="background" type="number" min="0" max="100" step="1" value="3"> %</span>
+            </label>
+          </div>
+
+          <div class="preset-row" aria-label="Batch presets">
+            <span>Try a scenario</span>
+            <button type="button" data-batch-preset="clean" class="active">Clean batch</button>
+            <button type="button" data-batch-preset="low-transduction">Low transduction</button>
+            <button type="button" data-batch-preset="high-background">High background</button>
+          </div>
+
+          <div class="metric-strip">
+            <div><span>Qualified TCR+ cells</span><strong id="qualified-cells">1.51 M</strong></div>
+            <div><span>Gates passed</span><strong id="gates-passed">3 / 3</strong></div>
+            <div><span>Limiting observation</span><strong id="limiting-gate">None</strong></div>
+          </div>
+          <p id="batch-action" class="result-line">Proceed while carrying an untransduced control into every target condition.</p>
+        </div>
+      </section>
+
+      <section id="series">
+        <p class="section-number">02</p>
+        <h2>Place the dose series around the reported window</h2>
+        <p>ShennonBio reported CD69-based EC<sub>50</sub> values between <strong>1 and 500 nM</strong> for MAGE-A1<sub>96–104</sub>:HLA-A*03:01 TCR candidates. The plot below is a mathematical 4-parameter logistic illustration of that range, not reconstructed candidate data.</p>
+
+        <div class="interaction-panel">
+          <div class="panel-heading compact">
+            <div>
+              <p class="small-label">Epitope context</p>
+              <h3><span class="sequence">SLFRAVITK</span> / HLA-A*03:01</h3>
+            </div>
+          </div>
+
+          <div class="slider-grid">
+            <label>Illustrative candidate EC<sub>50</sub>
+              <input id="ec50-slider" type="range" min="0" max="270" step="1" value="100">
+              <output id="ec50-output">10 nM</output>
+            </label>
+            <label>Concentration points
+              <input id="point-slider" type="range" min="8" max="12" step="1" value="10">
+              <output id="point-output">10</output>
+            </label>
+          </div>
+
+          <figure>
+            <svg id="dose-chart" viewBox="0 0 680 330" role="img" aria-labelledby="dose-chart-title dose-chart-desc">
+              <title id="dose-chart-title">Illustrative CD69 dose-response curve</title>
+              <desc id="dose-chart-desc">A logistic curve changes as the selected EC50 moves within ShennonBio's reported 1 to 500 nanomolar interval.</desc>
+            </svg>
+            <figcaption>The shaded interval marks the published EC<sub>50</sub> range; it does not imply a distribution of ShennonBio candidates.</figcaption>
+          </figure>
+
+          <p class="small-label">Recommended shared dilution series</p>
+          <div id="dose-list" class="dose-list" aria-live="polite"></div>
+          <p id="series-note" class="result-line"></p>
+        </div>
+      </section>
+
+      <section id="assay">
+        <p class="section-number">03</p>
+        <h2>Build a donor-balanced specificity assay</h2>
+        <p>The core comparison is factorial: antigen and restricting HLA must each be present for a specific response. The planner keeps those controls, multiple donors, dose points, and replicate counts in the cell budget.</p>
+
+        <div class="interaction-panel">
+          <div class="controls-grid assay-controls">
+            <label>Healthy donors
+              <span><input id="donors" type="number" min="1" max="8" step="1" value="3"></span>
+            </label>
+            <label>TCR candidates
+              <span><input id="candidates" type="number" min="1" max="12" step="1" value="4"></span>
+            </label>
+            <label>Technical replicates
+              <span><input id="replicates" type="number" min="1" max="4" step="1" value="2"></span>
+            </label>
+            <label>Effector cells / well
+              <span><input id="effectors" type="number" min="5000" max="100000" step="5000" value="20000"></span>
+            </label>
+          </div>
+
+          <fieldset>
+            <legend>Target-cell contexts</legend>
+            <label class="check-row"><input type="checkbox" class="target-context" value="double-positive" checked disabled> MAGE-A1+ / HLA-A*03:01+ <span>on-target</span></label>
+            <label class="check-row"><input type="checkbox" class="target-context" value="antigen-negative" checked> MAGE-A1− / HLA-A*03:01+ <span>antigen control</span></label>
+            <label class="check-row"><input type="checkbox" class="target-context" value="hla-negative" checked> MAGE-A1+ / HLA-A*03:01− <span>restriction control</span></label>
+            <label class="check-row"><input type="checkbox" class="target-context" value="double-negative" checked> MAGE-A1− / HLA-A*03:01− <span>background control</span></label>
+          </fieldset>
+
+          <div class="metric-strip four">
+            <div><span>Experimental wells</span><strong id="well-count">960</strong></div>
+            <div><span>96-well plates</span><strong id="plate-count">10</strong></div>
+            <div><span>Effector cells</span><strong id="effector-total">19.2 M</strong></div>
+            <div><span>Qualified cells</span><strong id="cell-coverage">7.9%</strong></div>
+          </div>
+
+          <div class="decision-grid">
+            <div>
+              <p class="small-label">Readout ladder</p>
+              <ol class="readout-list">
+                <li><span>Early activation</span><strong>CD69 flow</strong></li>
+                <li><span>Sustained activation</span><strong>CD137 + CD25 flow</strong></li>
+                <li><span>Secreted function</span><strong>IFNγ + IL-2 ELISA</strong></li>
+                <li><span>Terminal function</span><strong>Target-cell lysis</strong></li>
+              </ol>
+            </div>
+            <div>
+              <p class="small-label">Planning interpretation</p>
+              <p id="assay-interpretation" class="plain-result">This design can test both antigen dependence and HLA restriction across three independent donors.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="evidence">
+        <p class="section-number">04</p>
+        <h2>What the public evidence actually says</h2>
+        <p>The interface separates published observations from planning calculations. These are the claims carried into the demo:</p>
+
+        <div class="evidence-table" role="table" aria-label="ShennonBio MAGE-A1 public evidence">
+          <div class="evidence-row header" role="row"><span>Stage</span><span>System</span><span>Reported observation</span></div>
+          <div class="evidence-row" role="row"><span>Discovery</span><span>Melanoma-patient PBMCs</span><span>Reactive T cells were functionally profiled, single-cell sorted, and TCR sequenced.</span></div>
+          <div class="evidence-row" role="row"><span>Avidity</span><span>TCR-KO Jurkat</span><span>CD69 EC<sub>50</sub> values spanned 1–500 nM.</span></div>
+          <div class="evidence-row" role="row"><span>Primary validation</span><span>Multiple healthy donors</span><span>Lead TCRs increased CD137, CD69, CD25, IFNγ, and IL-2.</span></div>
+          <div class="evidence-row" role="row"><span>Specificity</span><span>Engineered target lines</span><span>No response without MAGE-A1 or HLA-A*03:01.</span></div>
+          <div class="evidence-row" role="row"><span>Function</span><span>In vitro + xenograft</span><span>Efficient low-E:T lysis, tumor control, and longer survival were reported.</span></div>
+        </div>
+
+        <aside class="finding">
+          <p class="small-label">The practical inference</p>
+          <p>A high transduction percentage is only a starting condition. A convincing lead should remain reproducible across donors, turn on several independent functional readouts, and stay quiet when either antigen or restricting HLA is absent.</p>
+        </aside>
+      </section>
+
+      <section>
+        <h2>Why this fits the position</h2>
+        <p>The job asks for primary T-cell isolation and engineering, lentiviral transduction, mammalian cell culture, flow cytometry, ELISA, and molecular cloning. This notebook makes the handoff between those tasks explicit: construct and batch quality determine whether a carefully controlled functional assay can be interpreted at all.</p>
+
+        <h2>What I would bring</h2>
+        <p>I have practical experience with mammalian cell culture, sterile technique, qPCR, ELISA, flow cytometry, fluorescence microscopy, and structured experimental documentation, together with Python and R analysis. I would bring that combination to careful bench execution, fast troubleshooting, and clear interpretation of multidimensional T-cell experiments.</p>
+      </section>
+
+      <section id="methods" class="methods">
+        <h2>Methods, limits, and sources</h2>
+        <p>The reported biological findings come from ShennonBio’s 2025 SITC abstract. The peptide sequence and HLA restriction are independently supported by the Cancer Antigenic Peptide Database and peer-reviewed literature. Dose curves are idealized logistic functions; batch thresholds, cell inputs, and plate calculations are illustrative planning parameters, not ShennonBio data or SOPs. No proprietary information is used.</p>
+        <ol>
+          <li><a href="https://jitc.bmj.com/content/13/Suppl_2/A383" target="_blank" rel="noreferrer">Li K. et al. Discovery and characterization of MAGE-A1-specific TCR candidates. JITC, 2025.</a></li>
+          <li><a href="https://www.shennonbio.com/technology" target="_blank" rel="noreferrer">Shennon Biotechnologies technology overview: TCELERATOR™, PINTA™, and SERIS™.</a></li>
+          <li><a href="https://caped.icp.ucl.ac.be/Peptide/list" target="_blank" rel="noreferrer">Cancer Antigenic Peptide Database: MAGE-A1 96–104, SLFRAVITK, HLA-A3.</a></li>
+          <li><a href="https://job-boards.greenhouse.io/shennonbiotechnologies/jobs/5164894007" target="_blank" rel="noreferrer">Research Associate / Senior Research Associate job description.</a></li>
+        </ol>
+      </section>
+    </article>
+  </main>
+
+  <footer>
+    <p>Cathy Liu · University of Melbourne</p>
+    <p><a href="mailto:cathyliu014@gmail.com">cathyliu014@gmail.com</a> · <a href="tel:+14152163799">415-216-3799</a></p>
+  </footer>
+
+  <script src="data.js?v=20260818a"></script>
+  <script src="app.js?v=20260818a"></script>
+</body>
+</html>
