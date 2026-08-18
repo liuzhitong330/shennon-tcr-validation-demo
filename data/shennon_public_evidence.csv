@@ -1,0 +1,8 @@
+stage,system,readout,public_finding,source
+Discovery,Melanoma-patient PBMCs,Functional single-cell profiling,"Reactive T cells were single-cell sorted and sequenced for their TCR",https://jitc.bmj.com/content/13/Suppl_2/A383
+Avidity,TCR-KO Jurkat cells,CD69 upregulation,"Reported EC50 range was 1-500 nM for MAGE-A1 96-104:HLA-A*03:01 candidates",https://jitc.bmj.com/content/13/Suppl_2/A383
+Primary validation,Healthy-donor primary T cells,"CD137; CD69; CD25; IFNg; IL2","Lead TCRs showed activation-marker upregulation and cytokine secretion across multiple donors",https://jitc.bmj.com/content/13/Suppl_2/A383
+Specificity,Engineered target cell lines,Functional response,"No responses were observed when target cells lacked MAGE-A1 or HLA-A*03:01",https://jitc.bmj.com/content/13/Suppl_2/A383
+Function,Engineered TCR-T cells,Target-cell lysis,"Efficient target-cell lysis was reported at low effector-to-target ratios",https://jitc.bmj.com/content/13/Suppl_2/A383
+In vivo,Cell-line-derived xenograft,Tumor growth and survival,"MAGE-A1-specific TCR-T cells controlled tumor growth and extended survival versus control TCR-T cells",https://jitc.bmj.com/content/13/Suppl_2/A383
+Epitope,MAGE-A1 positions 96-104,Peptide sequence,"SLFRAVITK; HLA-A3 restricted",https://caped.icp.ucl.ac.be/Peptide/list
